@@ -1,5 +1,5 @@
 import * as THREE from "https://unpkg.com/three@0.127.0/build/three.module.js";
-import {OrbitControls, OribitControl} from 'https://unpkg.com/three@0.127.0/examples/jsm/controls/OrbitControls.js';
+import {OrbitControls} from 'https://unpkg.com/three@0.127.0/examples/jsm/controls/OrbitControls.js';
 
 // Renderer
 const renderer = new THREE.WebGLRenderer();
@@ -10,7 +10,7 @@ document.body.appendChild(renderer.domElement);
 const textureLoader = new THREE.TextureLoader();
 
 // All texture for all textures
-const starTexture = textureLoader.load("./img/NightSky.png");
+const starTexture = textureLoader.load("/img/NightSky.jpeg");
 
 
 // Scene 
@@ -62,26 +62,46 @@ function lineForOrbits(radius, color, width) {
     color: color,
     linewidth: width,
   });
+
+  const geom = new THREE.BufferGeometry();
+  const lineOfOrbitsPoints = [];
+
+  // Make the points go in a circular motion
+  const numPoints = 100; // Estimated guess
+  for (let i = 0; i <= numPoints; i++) {
+    const angle = (i / numPoints ) * Math.PI * 2;
+    const x = radius * Math.cos(angle);
+    const y = radius * Math.sin(angle);
+    lineOfOrbitsPoints.push(x, 0, y);
+  }
+
+  geom.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(lineOfOrbitsPoints, 3)
+  );
+
+  const orbitLoop = new THREE.LineLoop(geom, material);
+  scene.add(orbitLoop);
+  orbitForPlanets.push(orbitLoop);
 }
-const geom = new THREE.BufferGeometry();
-const lineOfOrbitsPoints = [];
 
-// Make the points go in a circular motion
-const numPoints = 100; // Estimated guess
-for (let i = 0; i <= numPoints; i++) {
-  const angle = (i / numPoints ) * Math.PI * 2;
-  const x = radius * Math.cos(angle);
-  const y = radius * Math.sin(angle);
-  lineOfOrbitsPoints.push(x, 0, z);
+// Creation of planets
+
+// GUI
+
+
+// Animate function
+function animate(time) {
+  theSun.rotateY(options.speed * 0.004);
+  // For each planet....
+  orbit.update();
+
+  renderer.render(scene, camera);
 }
+renderer.setAnimationLoop(animate);
 
-geom.setAttribute(
-  "position",
-  new THREE.Float32BufferAttribute(lineOfOrbitsPoints, 3)
-);
-const orbitLoop = new THREE.LineLoop(geom, material);
-scene.add(orbitLoop);
-orbitForPlanets.push(orbitLoop);
-
-
-
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+})
