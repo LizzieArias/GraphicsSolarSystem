@@ -7,7 +7,7 @@ import { GUI } from 'dat.gui';
 const loader = new THREE.TextureLoader();
 
 // All texture for all textures
-const sunTexture = loader.load("./src/img/sun.jpg");
+const sunTexture = loader.load("./src/img/sun.jpeg");
 const mercuryTexture = loader.load("./src/img/mercury.jpg");
 const earthTexture = loader.load("./src/img/earth.jpg");
 const venusTexture = loader.load("./src/img/venus.jpg");
